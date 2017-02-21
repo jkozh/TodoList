@@ -26,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         lvItems = (ListView) findViewById(R.id.lvItems);
         readItems();
+        // In any activity just pass the context and use the singleton method
+        TodoItemDatabase database = TodoItemDatabase.getInstance(this);
         itemsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items);
         lvItems.setAdapter(itemsAdapter);
         setUpListViewListener();
