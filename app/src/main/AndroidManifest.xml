@@ -8,13 +8,30 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- AddTaskActivity -->
+        <activity
+            android:name="com.android.julia.todolist.ui.AddTaskActivity"
+            android:label="@string/add_task_activity_name" />
+        <!-- EditTaskActivity -->
+        <activity
+            android:name="com.android.julia.todolist.ui.EditTaskActivity"
+            android:label="@string/edit_task_activity_name" />
+
+        <!-- Register the TaskContentProvider -->
+        <!-- Set name, authorities, and exported attributes -->
+        <!-- exported = false limits access to this ContentProvider to only this app -->
+        <provider
+            android:name="com.android.julia.todolist.data.TaskContentProvider"
+            android:authorities="com.android.julia.todolist"
+            android:exported="false"/>
     </application>
 
 </manifest>
