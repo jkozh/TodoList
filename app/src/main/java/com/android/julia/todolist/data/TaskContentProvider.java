@@ -46,7 +46,8 @@ public class TaskContentProvider extends ContentProvider {
     // Member variable for a TaskDbHelper that's initialized in the onCreate() method
     private TaskDbHelper mTaskDbHelper;
 
-    /**
+
+    /*
      Initialize a new matcher object without any matches,
      then use .addURI(String authority, String path, int match) to add matches
      */
@@ -66,10 +67,12 @@ public class TaskContentProvider extends ContentProvider {
         return uriMatcher;
     }
 
-    /* onCreate() is where you should initialize anything you’ll need to setup
-    your underlying data source.
-    In this case, you’re working with a SQLite database, so you’ll need to
-    initialize a DbHelper to gain access to it.
+
+    /**
+     * onCreate() is where you should initialize anything you’ll need to setup
+     * your underlying data source.
+     * In this case, you’re working with a SQLite database, so you’ll need to
+     * initialize a DbHelper to gain access to it.
      */
     @Override
     public boolean onCreate() {
@@ -116,12 +119,12 @@ public class TaskContentProvider extends ContentProvider {
     }
 
 
-    /* getType() handles requests for the MIME type of data
-    We are working with two types of data:
-    1) a directory and 2) a single row of data.
-    This method will not be used in our app, but gives a way to standardize the data formats
-    that your provider accesses, and this can be useful for data organization.
-    For now, this method will not be used but will be provided for completeness.
+    /** getType() handles requests for the MIME type of data
+     * We are working with two types of data:
+     * 1) a directory and 2) a single row of data.
+     * This method will not be used in our app, but gives a way to standardize the data formats
+     * that your provider accesses, and this can be useful for data organization.
+     * For now, this method will not be used but will be provided for completeness.
      */
     @Nullable
     @Override
@@ -217,16 +220,16 @@ public class TaskContentProvider extends ContentProvider {
     public int update(@NonNull Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
 
-        //Keep track of if an update occurs
+        // Keep track of if an update occurs
         int tasksUpdated;
         // match code
         int match = sUriMatcher.match(uri);
 
         switch (match) {
             case TASK_WITH_ID:
-                // update a single task by getting the id
+                // Update a single task by getting the id
                 String id = uri.getPathSegments().get(1);
-                // using selections
+                // Using selections
                 tasksUpdated = mTaskDbHelper.getWritableDatabase()
                         .update(TABLE_NAME, values, "_id=" + id, null);
                 break;
@@ -235,11 +238,11 @@ public class TaskContentProvider extends ContentProvider {
         }
 
         if (tasksUpdated != 0) {
-            //set notifications if a task was updated
+            // Set notifications if a task was updated
             getContext().getContentResolver().notifyChange(uri, null);
         }
 
-        // return number of tasks updated
+        // Return number of tasks updated
         return tasksUpdated;
     }
 }

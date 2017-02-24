@@ -42,11 +42,13 @@ public class EditTaskDialogFragment extends DialogFragment implements View.OnCli
     private int mPriority;
     private int mPosition;
 
+
     public EditTaskDialogFragment() {
         // Empty constructor is required for DialogFragment
         // Make sure not to add arguments to the constructor
         // Use `newInstance` instead as shown below
     }
+
 
     public static EditTaskDialogFragment newInstance(int pos, String description, int priority) {
         EditTaskDialogFragment frag = new EditTaskDialogFragment();
@@ -132,6 +134,7 @@ public class EditTaskDialogFragment extends DialogFragment implements View.OnCli
             return;
         }
 
+        // Return changed task data back to activity through the implemented listener
         EditTaskDialogListener listener = (EditTaskDialogListener) getActivity();
         listener.onFinishEditTaskDialog(mPosition, input, mPriority);
     }
