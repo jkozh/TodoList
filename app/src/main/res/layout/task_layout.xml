@@ -13,13 +13,14 @@
         This horizontal linear layout displays the description and priority of a task
         in a single horizontal line
     -->
-    <LinearLayout android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingBottom="8dp"
+        android:paddingBottom="@dimen/linear_layout_padding"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="24dp">
+        android:paddingTop="@dimen/linear_layout_padding">
 
         <!-- TextView that displays the description of a task -->
         <TextView
@@ -35,7 +36,9 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <!-- A priority circle that is colored in programmatically in the adapter code -->
+        <!--
+            A priority rounded rectangle that is colored in programmatically in the adapter code
+        -->
         <TextView
             android:id="@+id/priorityTextView"
             style="@style/TextAppearance.AppCompat.Small"
@@ -44,16 +47,10 @@
             android:layout_gravity="center"
             android:background="@drawable/priority_circle"
             android:gravity="center"
-            android:padding="5dp"
+            android:padding="@dimen/text_view_padding"
             android:textAlignment="center"
             android:textColor="@android:color/primary_text_light" />
 
     </LinearLayout>
-
-    <!-- A gray divider line at the bottom of each task -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
 
 </LinearLayout>

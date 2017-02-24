@@ -96,7 +96,7 @@ public class TodoCursorAdapter extends RecyclerView.Adapter<TodoCursorAdapter.Ta
         final String description = mCursor.getString(descriptionIndex);
         final int priority = mCursor.getInt(priorityIndex);
 
-        //Set values
+        // Set values
         holder.itemView.setTag(id);
         holder.taskDescriptionView.setText(description);
 
@@ -104,13 +104,13 @@ public class TodoCursorAdapter extends RecyclerView.Adapter<TodoCursorAdapter.Ta
         String priorityString = "";
         switch (priority) {
             case 1:
-                priorityString = "HIGH";
+                priorityString = holder.itemView.getResources().getString(R.string.high_priority);
                 break;
             case 2:
-                priorityString = "MEDIUM";
+                priorityString = holder.itemView.getResources().getString(R.string.med_priority);
                 break;
             case 3:
-                priorityString = "LOW";
+                priorityString = holder.itemView.getResources().getString(R.string.low_priority);
                 break;
         }
         holder.priorityView.setText(priorityString);
@@ -130,10 +130,10 @@ public class TodoCursorAdapter extends RecyclerView.Adapter<TodoCursorAdapter.Ta
     }
 
 
-    /*
-    Helper method for selecting the correct priority circle color.
-    P1 = red, P2 = orange, P3 = yellow
-    */
+    /**
+     * Helper method for selecting the correct priority circle color.
+     * P1 = red, P2 = orange, P3 = yellow
+     */
     private int getPriorityColor(int priority) {
         int priorityColor = 0;
 
@@ -171,14 +171,14 @@ public class TodoCursorAdapter extends RecyclerView.Adapter<TodoCursorAdapter.Ta
      * with a newly updated Cursor (Cursor c) that is passed in.
      */
     public Cursor swapCursor(Cursor c) {
-        // check if this cursor is the same as the previous cursor (mCursor)
+        // Check if this cursor is the same as the previous cursor (mCursor)
         if (mCursor == c) {
             return null; // nothing has changed
         }
         Cursor temp = mCursor;
         this.mCursor = c; // new cursor value assigned
 
-        //check if this is a valid cursor, then update the cursor
+        // Check if this is a valid cursor, then update the cursor
         if (c != null) {
             this.notifyDataSetChanged();
         }

@@ -2,12 +2,16 @@
     <string name="app_name">ToDo List</string>
     <string name="main_activity_name">All Tasks</string>
     <string name="add_task_activity_name">Add a New Task</string>
-    <string name="edit_task_activity_name">Edit Task</string>
+
+    <!-- Strings for EditTaskDialogFragment -->
+    <string name="title_edit_task_dialog">Edit Task</string>
+    <string name="action_save_edit_task_dialog">Save</string>
+    <string name="action_cancel_edit_task_dialog">Cancel</string>
 
     <!-- Strings for MainActivity -->
-    <string name="priority_1">1</string>
-    <string name="priority_2">2</string>
-    <string name="priority_3">3</string>
+    <string name="priority_1">HIGH</string>
+    <string name="priority_2">MEDIUM</string>
+    <string name="priority_3">LOW</string>
 
     <!-- Strings for AddTaskActivity -->
     <!-- This edit task has a unicode character for "..." = "&#8230;" -->
@@ -19,6 +23,5 @@
     <string name="low_priority">Low</string>
 
     <string name="add_button">Add</string>
-    <string name="save_button">Save</string>
 
 </resources>

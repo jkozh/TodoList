@@ -24,10 +24,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
@@ -45,17 +47,20 @@ import butterknife.OnClick;
 
 
 public class MainActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+        LoaderManager.LoaderCallbacks<Cursor>, EditTaskDialogListener {
 
     // Constants for logging and referring to a unique loader
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int TASK_LOADER_ID = 0;
-    private final int REQUEST_CODE = 20;
-    SQLiteDatabase sqLiteDatabase;
+
+    SQLiteDatabase mDatabase;
+
     @BindView(R.id.recyclerViewTasks) RecyclerView mRecyclerView;
     @BindView(R.id.fab) FloatingActionButton mFabButton;
+
     // Member variables for the adapter and RecyclerView
     private TodoCursorAdapter mAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,22 +71,15 @@ public class MainActivity extends AppCompatActivity implements
 
         // Get DBHelper to read from database
         final TaskDbHelper helper = TaskDbHelper.getInstance(this);
-        sqLiteDatabase = helper.getReadableDatabase();
+        mDatabase = helper.getReadableDatabase();
 
         // Initialize the adapter and attach it to the RecyclerView
         mAdapter = new TodoCursorAdapter(this, new TaskClickListener() {
             @Override
             public void onTaskClick(View v, int position, String description, int priority) {
 
-                // Create a new intent to start an EditTaskActivity
-                Intent editTaskIntent = new Intent(MainActivity.this, EditTaskActivity.class);
-                // Pass along the position, text, and priority of clicked item
-                // to the EditTaskActivity using extras
-                editTaskIntent.putExtra("position", position);
-                editTaskIntent.putExtra("description", description);
-                editTaskIntent.putExtra("priority", priority);
+                showEditTaskDialog(position, description, priority);
 
-                startActivityForResult(editTaskIntent, REQUEST_CODE);
             }
         });
         mRecyclerView.setAdapter(mAdapter);
@@ -91,7 +89,6 @@ public class MainActivity extends AppCompatActivity implements
          An ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder,
          and uses callbacks to signal when a user is performing these actions.
          */
-
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
                 0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -103,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements
             // Called when a user swipes left or right on a ViewHolder
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                // Construct the URI for the item to delete
+                // Construct the URI for the item to delete.
                 // Use getTag (from the adapter code) to get the id of the swiped item
                 // Retrieve the id of the task to delete
                 int id = (int) viewHolder.itemView.getTag();
@@ -126,29 +123,27 @@ public class MainActivity extends AppCompatActivity implements
          created, otherwise the last created loader is re-used.
          */
         getSupportLoaderManager().initLoader(TASK_LOADER_ID, null, this);
+
+        // A gray divider line at the bottom of each task
+        mRecyclerView.addItemDecoration(
+                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
-            // Extract name value from result extras
-            int position = data.getExtras().getInt("position", 0);
-            String description = data.getExtras().getString("description");
-            int priority = data.getExtras().getInt("priority", 1);
-
-            // Update new task data via a ContentResolver
-            // Create new empty ContentValues object
-            ContentValues contentValues = new ContentValues();
-            // Put the task description and selected priority into the ContentValues
-            contentValues.put(TaskContract.TaskEntry.COLUMN_DESCRIPTION, description);
-            contentValues.put(TaskContract.TaskEntry.COLUMN_PRIORITY, priority);
-            // Update the content values via a ContentResolver
-            Uri uri = Uri.withAppendedPath(
-                    TaskContract.TaskEntry.CONTENT_URI, Integer.toString(position));
-
-            getContentResolver().update(uri, contentValues, null, null);
-        }
+    /**
+     * This method is called after user clicks on any task to edit it.
+     *
+     * @param position    The position of the clicked task
+     * @param description The description of the clicked task
+     * @param priority    The priority of the clicked task
+     */
+    private void showEditTaskDialog(int position, String description, int priority) {
+        FragmentManager fm = getSupportFragmentManager();
+        // Pass along the position, text, and priority of clicked item
+        // to the EditTaskDialogFragment
+        EditTaskDialogFragment editTaskDialogFragment =
+                EditTaskDialogFragment.newInstance(position, description, priority);
+        editTaskDialogFragment.show(fm, "fragment_edit_task");
     }
 
 
@@ -226,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements
      * Called when a previously created loader has finished its load.
      *
      * @param loader The Loader that has finished.
-     * @param data The data generated by the Loader.
+     * @param data   The data generated by the Loader.
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
@@ -254,9 +249,32 @@ public class MainActivity extends AppCompatActivity implements
      * to launch the AddTaskActivity.
      */
     @OnClick(R.id.fab)
-    public void AddTask(View view) {
+    public void addTask(View view) {
         // Create a new intent to start an AddTaskActivity
         Intent addTaskIntent = new Intent(MainActivity.this, AddTaskActivity.class);
         startActivity(addTaskIntent);
+    }
+
+
+    /**
+     * This method is called after the user presses 'Save' button in EditTaskDialogFragment.
+     * Edited data of the task puts into ContentResolver, then database updates, and then
+     * restarts the loader to re-query the underlying data for any changes.
+     */
+    @Override
+    public void onFinishEditTaskDialog(int position, String description, int priority) {
+        // Update new task data via a ContentResolver.
+        // Create new empty ContentValues object.
+        ContentValues contentValues = new ContentValues();
+        // Put the task description and selected priority into the ContentValues
+        contentValues.put(TaskContract.TaskEntry.COLUMN_DESCRIPTION, description);
+        contentValues.put(TaskContract.TaskEntry.COLUMN_PRIORITY, priority);
+        // Create uri path with id of edited task
+        Uri uri = Uri.withAppendedPath(
+                TaskContract.TaskEntry.CONTENT_URI, Integer.toString(position));
+        // Update the content values via a ContentResolver
+        getContentResolver().update(uri, contentValues, null, null);
+        // Restart the loader to re-query for all tasks after an editing
+        getSupportLoaderManager().restartLoader(TASK_LOADER_ID, null, MainActivity.this);
     }
 }

@@ -13,7 +13,7 @@
         android:id="@+id/recyclerViewTasks"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="8dp"
+        android:paddingBottom="@dimen/recycler_view_padding_bottom"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
 
     <!-- Floating action button that launches AddTaskActivity when clicked -->

@@ -20,10 +20,6 @@
         <activity
             android:name="com.android.julia.todolist.ui.AddTaskActivity"
             android:label="@string/add_task_activity_name" />
-        <!-- EditTaskActivity -->
-        <activity
-            android:name="com.android.julia.todolist.ui.EditTaskActivity"
-            android:label="@string/edit_task_activity_name" />
 
         <!-- Register the TaskContentProvider -->
         <!-- Set name, authorities, and exported attributes -->

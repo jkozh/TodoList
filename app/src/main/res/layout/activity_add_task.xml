@@ -29,8 +29,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="@dimen/text_view_margin"
+        android:layout_marginTop="@dimen/text_view_margin"
         android:text="@string/priority_string"
         android:textColor="@android:color/primary_text_light"/>
 
